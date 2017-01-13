@@ -1,4 +1,5 @@
 package main.scala.interpreter
+import collection.mutable.Stack
 
 /**
   * Created by erik on 1/11/17.
@@ -15,6 +16,8 @@ class TnList(var list: List[TnObj]) extends TnObj{
 
   override def isString = list.forall(_.isChar)
 
+  override def asString: String = list.map(_.asChar).mkString
+
   override def isFunction = list match {
     case name :: body :: Nil if name.isString && body.isList => true
     case _ => false
@@ -28,6 +31,8 @@ class TnList(var list: List[TnObj]) extends TnObj{
   override def isTable = list.forall(_.isModule)
 
   override def getList = list
+
+  def applyContent(stack: Stack[TnObj]): Stack[TnObj] = {for(obj <- list) obj(stack); stack}
 
   override def toString: String = {
     if (list.isEmpty) "[]"

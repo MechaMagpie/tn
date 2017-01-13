@@ -5,7 +5,7 @@ import collection.mutable.Stack
   * Created by erik on 1/11/17.
   */
 trait TnObj {
-  def apply(stack: Stack[TnObj]): Unit = stack.push(this)
+  def apply(stack: Stack[TnObj]): Stack[TnObj] = stack.push(this)
 
   /*
   These make no sense for general objects, but I'm too lazy to put isInstanceOf asInstanceOf everywhere
@@ -22,5 +22,6 @@ trait TnObj {
    */
   def asChar: Char = ???
   def asString: String = ???
+  def asInt: Int = ???
   def getList: List[TnObj] = ???
 }

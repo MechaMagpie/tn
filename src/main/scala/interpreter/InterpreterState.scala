@@ -37,4 +37,10 @@ object FunctionTable {
     }
     update
   }
+
+  def replace(newTable: TnList): Unit = {
+    require(newTable.isTable)
+    fnLs = newTable
+    update
+  }
 }
