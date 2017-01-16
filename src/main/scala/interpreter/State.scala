@@ -10,13 +10,13 @@ object InterpreterState {
 }
 
 object FunctionTable {
-  var fnLs: TnList = TnList(TnList(TnInt('m'))); update
+  var fnLs: TnList = TnList(TnList(TnInt('m'), fromString("init"))); update
 
   var map = Map[String, TnList]()
   private def update(): Unit = {
     map = Map[String, TnList]()
     assert(fnLs.isTable)
-    for(module <- fnLs.getList; function <- module.getList.tail) {
+    for(module <- fnLs.getList; function <- module.getList.drop(2)) {
       val name :: body :: Nil = function.getList
       map += name.asString -> body.asInstanceOf[TnList]
     }
