@@ -11,6 +11,8 @@ case class TnInt(value: Int) extends TnObj {
     value.toChar
   }
 
+  override def isInt = true
+
   override def asInt = value
 
   override def toString: String = value.toString

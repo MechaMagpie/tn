@@ -5,6 +5,6 @@ package main.scala.interpreter
   */
 object Main {
   def setup(): Unit = {
-    InterpreterState.table.replace(TnList(Functions.defaultModule))
+    State.table.replace(TnList(Functions.defaultModule))
   }
 }

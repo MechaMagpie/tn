@@ -1,18 +1,25 @@
 package main.scala.interpreter
+import java.io._
+
 import collection.mutable.Stack
 
 /**
   * Created by erik on 1/13/17.
   */
-object InterpreterState {
+object State {
   val stack = Stack[TnObj]()
   val table = FunctionTable
+
+  var input = new BufferedReader(new InputStreamReader(System.in))
+  var output = System.out
 }
 
 object FunctionTable {
   var fnLs: TnList = TnList(TnList(TnInt('m'), fromString("init"))); update
 
   var map = Map[String, TnList]()
+  var nameVector = Vector[String]()
+
   private def update(): Unit = {
     map = Map[String, TnList]()
     assert(fnLs.isTable)
@@ -20,6 +27,7 @@ object FunctionTable {
       val name :: body :: Nil = function.getList
       map += name.asString -> body.asInstanceOf[TnList]
     }
+    nameVector = map.keySet.toVector.sortBy(_.length)
   }
   def defun(name:TnObj, body:TnObj): Unit = {
     require(name.isString && body.isList)

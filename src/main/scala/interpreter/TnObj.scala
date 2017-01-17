@@ -14,6 +14,7 @@ trait TnObj {
   def isChar = false
   def isString = false
   def isList = false
+  def isInt = false
   def isFunction = false
   def isModule = false
   def isTable = false

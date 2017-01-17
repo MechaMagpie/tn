@@ -24,15 +24,13 @@ class TnList(var list: List[TnObj]) extends TnObj{
   }
 
   override def isModule = list match {
-    case TnInt('m') :: fns if fns.forall(_.isFunction) => true
+    case TnInt('m') :: name :: fns if name.isString && fns.forall(_.isFunction) => true
     case _ => false
   }
 
   override def isTable = list.forall(_.isModule)
 
   override def getList = list
-
-  def applyContent(stack: Stack[TnObj]): Stack[TnObj] = {for(obj <- list) obj(stack); stack}
 
   override def toString: String = {
     if (list.isEmpty) "[]"

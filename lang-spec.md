@@ -38,9 +38,9 @@ The following functions should be built into the interpreter
 | pull	 | ...		 | [body] bool  | Pulls next function, pushes it's body and true or pushes [] and false, without removing anything from the source  |
 | tn	 | ...		 | [name] 	| Pushes a temporary name      	       	  		      |
 | put	 | x		 | ...		| Prints the character represented by x to current output     |
-| input	 | [filename]	 | ...		| Changes source stream to "filename"			      |
-| output | [filename]	 | ...		| Changes current output stream to "filename"		      |
-| exit	 | ...		 | 		| Halts the programe	 	   			      |
+| input	 | [filename]	 | [previous]	| Changes source stream to "filename"			      |
+| output | [filename]	 | [previous]	| Changes current output stream to "filename"		      |
+| exit	 | ...		 | 		| Halts the program	 	   			      |
 | +	 | i1 i2	 | i1 + i2	| Adds two integers					      |
 | -	 | i1 i2	 | i1 - i2	| Subtracts two integers				      |
 | * 	 | i1 i2	 | i1 * i2	| Multiplies two integers				      |
