@@ -30,18 +30,20 @@ object FunctionTable {
     nameVector = map.keySet.toVector.sortBy(_.length)
   }
   def defun(name:TnObj, body:TnObj): Unit = {
-    require(name.isString && body.isList)
+    require(name.isString, name + " is not a string")
+    require(body.isList, body + " is not a list")
     val firstModule = fnLs.getList.head.asInstanceOf[TnList]
-    val m :: rest = firstModule.getList
-    firstModule.list = m :: TnList(name, body) :: rest
+    val m :: moduleName :: rest = firstModule.getList
+    firstModule.list = m :: moduleName :: TnList(name, body) :: rest
     update
   }
 
   def undefun(name:TnObj): Unit = {
     require(name.isString)
-    for(m <- fnLs.getList) {
-      val module = m.asInstanceOf[TnList]
-      module.list = module.list.filter(f => f.getList.head.asString != name.asString)
+    for(mod <- fnLs.getList) {
+      val module = mod.asInstanceOf[TnList]
+      val m :: moduleName :: moduleBody = module.list
+      module.list = m :: moduleName :: moduleBody.filter(f => f.getList.head.asString != name.asString)
     }
     update
   }

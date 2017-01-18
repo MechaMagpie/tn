@@ -33,23 +33,20 @@ class TnList(var list: List[TnObj]) extends TnObj{
   override def getList = list
 
   override def toString: String = {
-    if (list.isEmpty) "[]"
-    else if (isString)
-      list.map(_.asChar).mkString("\"", "", "\"")
-    else {
-      import collection.immutable.Set
-      def toStringRecur(obj: TnList, seen: Set[TnObj]): String = {
-        if (seen.contains(obj)) "[%]"
-        else {
-          obj.list.
-            map(_ match {
-              case ls: TnList => toStringRecur(ls, seen + obj);
-              case o => o.toString
-            }).mkString("[", " ", "]")
-        }
+    import collection.immutable.Set
+    def toStringRecur(obj: TnList, seen: Set[TnObj]): String = {
+      if (seen.contains(obj)) "[%]"
+      else if (obj.list.isEmpty) "[]"
+      else if (obj.isString) obj.list.map(_.asChar).mkString("\"","","\"")
+      else {
+        obj.list.
+          map(_ match {
+            case ls: TnList => toStringRecur(ls, seen + obj);
+            case o => o.toString
+          }).mkString("[", " ", "]")
       }
-      toStringRecur(this, Set[TnObj]())
     }
+    toStringRecur(this, Set[TnObj]())
   }
 
   /**
@@ -75,4 +72,5 @@ class TnList(var list: List[TnObj]) extends TnObj{
 
 object TnList {
   def apply(init: TnObj*): TnList = new TnList(List(init:_*))
+  def apply(init: List[TnObj]): TnList = new TnList(init)
 }

@@ -50,6 +50,8 @@ object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.p
     State.table.defun(name, body)})
 object Undef extends TnFun("undef", stack => State.table.undefun(stack.pop))
 object Sym extends TnFun("sym", _.push(State.table.fnLs.structuralCopy))
+object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].structuralCopy))
+object Intern extends TnFun("intern", stack => stack.push(State.table.map(stack.pop.asString)))
 object Pull extends TnFun("pull", stack => {
   val res = Parser.parseNext; res match {
     case Some(fun) => stack.push(fun, 1)
@@ -72,10 +74,11 @@ object ListEq extends TnFun("'=", stack => {val (l1, l2) = (stack.pop, stack.pop
   stack.push(if(l1.isList && l2.isList && l1 == l2) 1 else 0)})
 object IsInt extends TnFun("int?", stack => stack.push(if(stack.pop.isInt) 1 else 0))
 object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isList) 1 else 0))
+object IsEmpty extends TnFun("null?", stack => stack.push(if(stack.pop.getList.isEmpty) 1 else 0))
 
 object Functions {
-  val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList, One, Ifte, Def, Undef,
-    Sym, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList)
+  val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList, One, Ifte, Def, Undef, Sym, Copy,
+    Intern, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList)
   val defaultModule = new TnList(TnInt('m') :: fromString("default") ::
     (for(fun <- allFunctions) yield TnList(fun.name, TnList(fun))).toList)
 }

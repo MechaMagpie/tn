@@ -35,6 +35,8 @@ The following functions should be built into the interpreter
 | def	 | [name] [body] | ...	  	| Defines a new function   	      	 	      	      |
 | undef	 | [name] 	 | ...	  	| Undefines a function				      	      |
 | sym	 | ...		 | table  	| Pushes a copy of the current function table		      |
+| copy	 | [l]		 | [l']		| Replaces top list with deep copy of same				  |
+| intern | [name]	 | [body]	| Retrieves function by name from the table				  |
 | pull	 | ...		 | [body] bool  | Pulls next function, pushes it's body and true or pushes [] and false, without removing anything from the source  |
 | tn	 | ...		 | [name] 	| Pushes a temporary name      	       	  		      |
 | put	 | x		 | ...		| Prints the character represented by x to current output     |
