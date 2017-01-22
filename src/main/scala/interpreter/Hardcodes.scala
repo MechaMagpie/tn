@@ -23,14 +23,18 @@ object Hardcodes {
   val xor = TnList(NullList, Cons, TnList(NullList, Cons, TnList(0), TnList(1), Ifte),
     TnList(NullList, Cons, TnList(1), TnList(0), Ifte), Ifte)
   val newPull = TnList(); newPull.list = List(Pull, Dup, TnList(), TnList(TnList(Swap, Dup, space, ListEq),
-    TnList(Pop, Pop, ref("pull")), TnList(Swap), Ifte), TnList(), Ifte)
+    TnList(Pop, Pop, ref("pull"), I), TnList(Swap), Ifte), TnList(), Ifte)
 
-  val spill = TnList(TnList(Dup, IsEmpty), TnList(Uncons), tnwhile, I)
+  val print = TnList(TnList(Dup, IsEmpty, not, I), TnList(Swap), tnwhile, I)
+  val spill = TnList(TnList(Dup, IsEmpty, not, I), TnList(Uncons), tnwhile, I, Pop)
   val w = TnList(TnInt('w'))
+  val leftBrace = TnList();
+  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, leftBrace, ListEq), TnList(Swap, Pop, I, NullList,
+    Cons, One), TnList(Swap), Ifte)
   val rightBrace = TnList(TnInt('s'))
-  val leftBrace = TnList(w, TnList(ref("pull"), I, Pop, TnList(Dup, IsList), TnList(Dup, rightBrace, ListEq, not, I),
-    TnList(1), Ifte), NullList, tnwhile, I, Pop, NullList, TnList(Swap, Dup, w, ListEq, not, I), TnList(Swap, Cons),
-    tnwhile, I, TnInt('!'), Put, Pop)
+  leftBrace.list = List(w, TnList(innerPull, I, Pop, TnList(Dup, rightBrace, ListEq), TnList(0),
+    TnList(spill, I, 1), Ifte), NullList, tnwhile, I, Pop, NullList, TnList(Swap, Dup, w, ListEq, not, I),
+    TnList(Swap, Cons), tnwhile, I, Pop)
 
   val functions: List[(String, TnList)] = List(
     (" ", space),
@@ -42,9 +46,12 @@ object Hardcodes {
     ("and", and),
     ("or", or),
     ("xor", xor),
+    ("print", print),
     ("]", rightBrace),
     ("[", leftBrace),
-    ("pull", newPull)
+    ("spill", spill),
+    ("pull", newPull),
+    ("pu[[", innerPull)
   )
 
   def build(): Unit = {

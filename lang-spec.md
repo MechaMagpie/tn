@@ -29,7 +29,7 @@ The following functions should be built into the interpreter
 | swap 	 | x y 	       	 | y x    	| Pops y, pops x, pushes y, pushes x			      |
 | cons 	 | x a	       	 | x::a   	| Prepends x to list a				      	      |
 | uncons | x::a	       	 | x a    	| Takes x from head of list a				      |
-| []	 | ...	       	 | []     	| Pushes the empty list	  			      	      |
+| []	 | ...	       	 | []     	| Pushes an empty list	  			      	      |
 | 1	 | ...		 | 1		| Pushes the integer 1					      |
 | ifte	 | [b] [t] [f] 	 | ...	  	| Executes b as a test for wheather to execute t or f	      |
 | def	 | [name] [body] | ...	  	| Defines a new function   	      	 	      	      |

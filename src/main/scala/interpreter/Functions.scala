@@ -58,7 +58,7 @@ object Pull extends TnFun("pull", stack => {
     case None => stack.push(TnList(), 0)
   }})
 object Tn extends TnFun("tn", _.push(TnGenerator.find(!State.table.map.keySet.contains(_)).get))
-object Put extends TnFun("put", stack => State.output.println(stack.pop.asInt))
+object Put extends TnFun("put", stack => State.output.print(stack.pop.asInt.toChar))
 object Input extends TnFun("input", stack => ???)
 object Output extends TnFun("output", stack => ???)
 object Exit extends TnFun("exit", stack => ???)
