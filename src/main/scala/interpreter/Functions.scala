@@ -16,7 +16,7 @@ object ConcatImplicits {
     /**
       * Simulates concatenative function chaining syntax
       */
-    def \(fun: TnFun): Stack[TnObj] = fun(stack)
+    def \(fun: TnObj): Stack[TnObj] = fun(stack)
   }
 }
 
@@ -32,9 +32,9 @@ object Pop extends TnFun("pop", _.pop)
 object I extends TnFun("i", stack => stack.pop.getList.foreach(_(stack)))
 object Swap extends TnFun("swap", stack => {val (x, y) = (stack.pop, stack.pop); stack.push(x,y)})
 object Cons extends
-  TnFun("cons", stack => {val (a, x) = (stack.pop, stack.pop); stack.push(new TnList(x::a.getList))})
+  TnFun("cons", stack => {val (a, x) = (stack.pop, stack.pop); stack.push(TnList(x::a.getList))})
 object Uncons extends
-  TnFun("uncons", stack => {val l = stack.pop; stack.push(l.getList.head, new TnList(l.getList.tail))})
+  TnFun("uncons", stack => {val l = stack.pop; stack.push(l.getList.head, TnList(l.getList.tail))})
 object NullList extends TnFun("[]", _.push(TnList()))
 object One extends TnFun("1", _.push(1))
 object Ifte extends TnFun("ifte", stack => {val (f, t, b) = (stack.pop, stack.pop, stack.pop);

@@ -1,5 +1,6 @@
 package main.scala.interpreter
 import collection.mutable.Stack
+import scala.collection.mutable
 
 /**
   * Created by erik on 1/11/17.
@@ -35,12 +36,13 @@ class TnList(var list: List[TnObj]) extends TnObj{
   override def toString: String = {
     import collection.immutable.Set
     def toStringRecur(obj: TnList, seen: Set[TnObj]): String = {
-      if (seen.contains(obj)) "[%]"
+      if (seen.contains(obj)) "[~]"
       else if (obj.list.isEmpty) "[]"
       else if (obj.isString) obj.list.map(_.asChar).mkString("\"","","\"")
       else {
-        obj.list.
-          map(_ match {
+        obj.list.map(
+          _ match {
+            case ls: TnList if State.table.nameMap.contains(ls) => "[" + State.table.nameMap(ls) + "]"
             case ls: TnList => toStringRecur(ls, seen + obj);
             case o => o.toString
           }).mkString("[", " ", "]")

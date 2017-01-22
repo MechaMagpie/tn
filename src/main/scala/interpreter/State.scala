@@ -19,23 +19,32 @@ object FunctionTable {
 
   var map = Map[String, TnList]()
   var nameVector = Vector[String]()
+  var nameMap = Map[TnList, String]()
 
   private def update(): Unit = {
     map = Map[String, TnList]()
+    nameMap = Map[TnList, String]()
     assert(fnLs.isTable)
     for(module <- fnLs.getList; function <- module.getList.drop(2)) {
       val name :: body :: Nil = function.getList
       map += name.asString -> body.asInstanceOf[TnList]
+      nameMap += body.asInstanceOf[TnList] -> name.asString
     }
-    nameVector = map.keySet.toVector.sortBy(_.length)
+    nameVector = map.keySet.toVector.sortBy(-_.length)
   }
+
   def defun(name:TnObj, body:TnObj): Unit = {
     require(name.isString, name + " is not a string")
     require(body.isList, body + " is not a list")
-    val firstModule = fnLs.getList.head.asInstanceOf[TnList]
-    val m :: moduleName :: rest = firstModule.getList
-    firstModule.list = m :: moduleName :: TnList(name, body) :: rest
-    update
+    if (map.keySet.contains(name.asString)) {
+      map(name.asString).list = body.getList
+      update
+    } else {
+      val firstModule = fnLs.getList.head.asInstanceOf[TnList]
+      val m :: moduleName :: rest = firstModule.getList
+      firstModule.list = m :: moduleName :: TnList(name, body) :: rest
+      update
+    }
   }
 
   def undefun(name:TnObj): Unit = {
