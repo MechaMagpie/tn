@@ -10,6 +10,7 @@ object Hardcodes {
   implicit def fromList(list: List[TnObj]): TnList = TnList(list)
   private def ref(name: String) = State.table.map(name)
 
+  val i = TnList(TnList(), TnList(0), Ifte)
   val space = TnList()
   val tab = TnList()
   val rotate = TnList(Swap, TnList(Swap), Dip, Swap)
@@ -35,6 +36,9 @@ object Hardcodes {
   leftBrace.list = List(w, TnList(innerPull, I, Pop, TnList(Dup, rightBrace, ListEq), TnList(0),
     TnList(spill, I, 1), Ifte), NullList, tnwhile, I, Pop, NullList, TnList(Swap, Dup, w, ListEq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop)
+  val allAscii = (32 to 126).toList
+  val chars = TnList(TnList(TnList(TnInt('m') :: fromString("chars") ::
+    (for(i <- allAscii) yield TnList(TnList(i), TnList(i))).toList)))
 
   val functions: List[(String, TnList)] = List(
     (" ", space),
@@ -49,9 +53,11 @@ object Hardcodes {
     ("print", print),
     ("]", rightBrace),
     ("[", leftBrace),
+    ("print", print),
     ("spill", spill),
     ("pull", newPull),
-    ("pu[[", innerPull)
+    ("pu[[", innerPull),
+    ("chars", chars)
   )
 
   def build(): Unit = {

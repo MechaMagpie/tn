@@ -22,38 +22,38 @@ The following functions should be built into the interpreter
 
 | Name 	 | Arguments	 | Result	| Definition			|
 | ---- 	 | ---------   	 | ------ 	| ------------------------- 	|
-| dup  	 | x y	       	 | x y y  	| Duplicates top element. Lists are duplicated by reference   |
-| dip  	 | ... x [p]   	 | ... x  	| Pops x, executes p, pushes x back 	      		      |
-| pop  	 | ... x       	 | ...    	| Pops x						      |
-| i    	 | ... [p]     	 | ...    	| Executes p						      |
-| swap 	 | x y 	       	 | y x    	| Pops y, pops x, pushes y, pushes x			      |
-| cons 	 | x a	       	 | x::a   	| Prepends x to list a				      	      |
-| uncons | x::a	       	 | x a    	| Takes x from head of list a				      |
-| []	 | ...	       	 | []     	| Pushes an empty list	  			      	      |
-| 1	 | ...		 | 1		| Pushes the integer 1					      |
-| ifte	 | [b] [t] [f] 	 | ...	  	| Executes b as a test for wheather to execute t or f	      |
-| def	 | [name] [body] | ...	  	| Defines a new function   	      	 	      	      |
-| undef	 | [name] 	 | ...	  	| Undefines a function				      	      |
-| sym	 | ...		 | table  	| Pushes a copy of the current function table		      |
-| copy	 | [l]		 | [l']		| Replaces top list with deep copy of same				  |
-| intern | [name]	 | [body]	| Retrieves function by name from the table				  |
-| pull	 | ...		 | [body] bool  | Pulls next function, pushes it's body and true or pushes [] and false, without removing anything from the source  |
-| tn	 | ...		 | [name] 	| Pushes a temporary name      	       	  		      |
-| put	 | x		 | ...		| Prints the character represented by x to current output     |
-| input	 | [filename]	 | [previous]	| Changes source stream to "filename"			      |
-| output | [filename]	 | [previous]	| Changes current output stream to "filename"		      |
-| exit	 | ...		 | 		| Halts the program	 	   			      |
-| +	 | i1 i2	 | i1 + i2	| Adds two integers					      |
-| -	 | i1 i2	 | i1 - i2	| Subtracts two integers				      |
-| * 	 | i1 i2	 | i1 * i2	| Multiplies two integers				      |
-| /	 | i1 i2	 | i1 / i2	| Divides two integers					      |
-| %	 | i1 i2	 | i1 % i2	| Takes the remainder of two integers			      |
-| <	 | i1 i2	 | i1 < i2	| Tests for smaller value    				      |
-| > 	 | i1 i2	 | i1 > i2	| Tests for greater value				      |
-| =	 | i1 i2	 | i1 = i2	| Tests for equal value					      |
-| '=	 | l1 l2	 | l1 == l2	| Tests for pointer to same list			      |
-| int?	 | x  		 | bool	 	| Tests for int						      |
-| list?	 | x		 | bool		| Tests for list pointer				      |
+| dup  	 | x y	       	 | x y y  	| Duplicates top element. Lists are duplicated by reference   	|
+| dip  	 | ... x [p]   	 | ... x  	| Pops x, executes p, pushes x back 	      		      		|
+| pop  	 | ... x       	 | ...    	| Pops x						      							|
+| i    	 | ... [p]     	 | ...    	| Executes p						      						|
+| swap 	 | x y 	       	 | y x    	| Pops y, pops x, pushes y, pushes x			      			|
+| cons 	 | x a	       	 | x::a   	| Prepends x to list a				      	      				|
+| uncons | x::a	       	 | x a    	| Takes x from head of list a				      				|
+| []	 | ...	       	 | []     	| Pushes an empty list	  			      	      				|
+| 1	 	 | ...		 	 | 1		| Pushes the integer 1					      					|
+| ifte	 | [b] [t] [f] 	 | ...	  	| Executes b as a test for wheather to execute t or f	      	|
+| def	 | [name] [body] | ...	  	| Defines a new function   	      	 	      	      			|
+| undef	 | [name] 	 	 | ...	  	| Undefines a function				      	      				|
+| sym	 | ...		 	 | table  	| Pushes a copy of the current function table		      		|
+| copy	 | [l]		 	 | [l']		| Replaces top list with deep copy of same				  		|
+| intern | [name]	 	 | [body]	| Retrieves function by name from the table				  		|
+| pull	 | ...		 	 | [body] bool  | Pulls next function, pushes it's body and true or pushes [] and false, without removing anything from the source  |
+| tn	 | ...		 	 | [name] 	| Pushes a temporary name      	       	  		      			|
+| put	 | x		 	 | ...		| Prints the character represented by x to current output     	|
+| input	 | [filename]	 | [previous]	| Changes source stream to "filename"			      		|
+| output | [filename]	 | [previous]	| Changes current output stream to "filename"		      	|
+| exit	 | ...		 	 | 			| Halts the program	 	   			      						|
+| +	 	 | i1 i2	 	 | i1 + i2	| Adds two integers					      						|
+| -	 	 | i1 i2	 	 | i1 - i2	| Subtracts two integers				      					|
+| * 	 | i1 i2	 	 | i1 * i2	| Multiplies two integers				      					|
+| /	 	 | i1 i2	 	 | i1 / i2	| Divides two integers					      					|
+| %	 	 | i1 i2	 	 | i1 % i2	| Takes the remainder of two integers			      			|
+| <	 	 | i1 i2	 	 | i1 < i2	| Tests for smaller value    				      				|
+| > 	 | i1 i2	 	 | i1 > i2	| Tests for greater value				      					|
+| =	 	 | i1 i2	 	 | i1 = i2	| Tests for equal value					      					|
+| '=	 | l1 l2	 	 | l1 == l2	| Tests for pointer to same list			      				|
+| int?	 | x  		 	 | bool	 	| Tests for int						      						|
+| list?	 | x		 	 | bool		| Tests for list pointer				      					|
 
 ## Predefined functions
 

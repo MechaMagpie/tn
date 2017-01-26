@@ -1,6 +1,8 @@
 package main.scala.interpreter
 
 import collection.mutable.Stack
+import scala.collection.mutable
+import util.control.Breaks._
 
 class TnFun(val name: String, function: Stack[TnObj] => Unit) extends TnObj {
   override def apply(stack: Stack[TnObj]): Stack[TnObj] = {function(stack); stack}
@@ -23,6 +25,19 @@ object ConcatImplicits {
 abstract class ArithFun(name: String, op: (Int, Int) => Int) extends
   TnFun(name, stack => {val (i2, i1) = (stack.pop.asInt, stack.pop.asInt); stack.push(op(i1, i2))})
 
+object RecurImpl {
+  def IIfte(what: TnFun): Unit = {
+    var fun = what;
+    breakable {
+      what match {
+        case Ifte => ???
+        case I => ???
+        case _ => ???
+      }
+    }
+  }
+}
+
 object Dup extends TnFun("dup", stack => {val x = stack.pop; stack.push(x, x)})
 object Dip extends TnFun("dip", stack => {
   val (p, x) = (stack.pop, stack.pop)
@@ -37,20 +52,39 @@ object Uncons extends
   TnFun("uncons", stack => {val l = stack.pop; stack.push(l.getList.head, TnList(l.getList.tail))})
 object NullList extends TnFun("[]", _.push(TnList()))
 object One extends TnFun("1", _.push(1))
-object Ifte extends TnFun("ifte", stack => {val (f, t, b) = (stack.pop, stack.pop, stack.pop);
+object Ifte extends TnFun("ifte", stack => ???)
+  /*stack => {val (f, t, b) = (stack.pop, stack.pop, stack.pop);
   b.getList.foreach(_(stack));
   if(stack.pop.asInt != 0)
     t.getList.foreach(_(stack))
   else
-    f.getList.foreach(_(stack))})
+    f.getList.foreach(_(stack))})*/ {
+
+  override def apply(stack: mutable.Stack[TnObj]): Stack[TnObj] = {
+    def lsRecur(ls: List[TnObj]): Option[TnObj] = ls match {
+      case el :: Nil => Some(el)
+      case el :: ls => {el(stack); lsRecur(ls)}
+      case _ => None
+    }
+    val (f, t, b) = (stack.pop, stack.pop, stack.pop)
+    b.getList.foreach(_(stack))
+    if(stack.pop().asInt != 0) {
+      val last = lsRecur(t.getList)
+      if(last.isDefined && last.get == Ifte) Ifte(stack) else last.get(stack)
+    } else {
+      val last = lsRecur(f.getList)
+      if(last.isDefined && last.get == Ifte) Ifte(stack) else last.get(stack)
+    }
+  }
+}
 object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop);
   if(name.asString == "sym")
     State.table.replace(body.asInstanceOf[TnList])
   else
     State.table.defun(name, body)})
 object Undef extends TnFun("undef", stack => State.table.undefun(stack.pop))
-object Sym extends TnFun("sym", _.push(State.table.fnLs.structuralCopy))
-object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].structuralCopy))
+object Sym extends TnFun("sym", _.push(State.table.fnLs.copy))
+object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].copy))
 object Intern extends TnFun("intern", stack => stack.push(State.table.map(stack.pop.asString)))
 object Pull extends TnFun("pull", stack => {
   val res = Parser.parseNext; res match {

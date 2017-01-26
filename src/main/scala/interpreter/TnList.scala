@@ -54,7 +54,7 @@ class TnList(var list: List[TnObj]) extends TnObj{
   /**
     * Inter-ref preserving copy of this list, vital for deep tablefuckery
     */
-  def structuralCopy(): TnList = {
+  def copy(): TnList = {
     import collection.mutable.Map
     val listRefs = Map[TnList, TnList]()
     listRefs += this -> new TnList(Nil)
