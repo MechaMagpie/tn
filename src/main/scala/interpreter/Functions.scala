@@ -1,8 +1,9 @@
 package main.scala.interpreter
 
 import collection.mutable.Stack
+import scala.annotation.tailrec
 import scala.collection.mutable
-import util.control.Breaks._
+import scala.util.control.TailCalls._
 
 class TnFun(val name: String, function: Stack[TnObj] => Unit) extends TnObj {
   override def apply(stack: Stack[TnObj]): Stack[TnObj] = {function(stack); stack}
@@ -22,21 +23,43 @@ object ConcatImplicits {
   }
 }
 
-abstract class ArithFun(name: String, op: (Int, Int) => Int) extends
-  TnFun(name, stack => {val (i2, i1) = (stack.pop.asInt, stack.pop.asInt); stack.push(op(i1, i2))})
-
 object RecurImpl {
-  def IIfte(what: TnFun): Unit = {
-    var fun = what;
-    breakable {
-      what match {
-        case Ifte => ???
-        case I => ???
-        case _ => ???
-      }
+  @tailrec
+  def lsRecur(ls: List[TnObj], stk: Stack[TnObj]): Option[TnObj] = {
+    ls match {
+      case el :: Nil => Some(el)
+      case el :: ls => {el(stk); lsRecur(ls, stk)}
+      case _ => None
+    }
+  }
+
+  def ifteImpl(stk: Stack[TnObj]): TailRec[Unit] = {
+    val (f, t, b) = (stk.pop, stk.pop, stk.pop)
+    b.getList.foreach(_(stk))
+    val active = if(stk.pop.asInt != 0) t else f
+    val last = lsRecur(active.getList, stk)
+    last match {
+      case Some(I) => tailcall(iImpl(stk))
+      case Some(Ifte) => tailcall(ifteImpl(stk))
+      case Some(obj) => {obj(stk); done()}
+      case None => done()
+    }
+  }
+
+  def iImpl(stk: Stack[TnObj]): TailRec[Unit] = {
+    val ls = stk.pop
+    val last = lsRecur(ls.getList, stk)
+    last match {
+      case Some(I) => tailcall(iImpl(stk))
+      case Some(Ifte) => tailcall(ifteImpl(stk))
+      case Some(obj) => {obj(stk); done()}
+      case None => done()
     }
   }
 }
+
+abstract class ArithFun(name: String, op: (Int, Int) => Int) extends
+  TnFun(name, stack => {val (i2, i1) = (stack.pop.asInt, stack.pop.asInt); stack.push(op(i1, i2))})
 
 object Dup extends TnFun("dup", stack => {val x = stack.pop; stack.push(x, x)})
 object Dip extends TnFun("dip", stack => {
@@ -44,7 +67,7 @@ object Dip extends TnFun("dip", stack => {
   p.getList.foreach(_(stack))
   stack.push(x)})
 object Pop extends TnFun("pop", _.pop)
-object I extends TnFun("i", stack => stack.pop.getList.foreach(_(stack)))
+object I extends TnFun("i", RecurImpl.iImpl(_).result)
 object Swap extends TnFun("swap", stack => {val (x, y) = (stack.pop, stack.pop); stack.push(x,y)})
 object Cons extends
   TnFun("cons", stack => {val (a, x) = (stack.pop, stack.pop); stack.push(TnList(x::a.getList))})
@@ -52,31 +75,7 @@ object Uncons extends
   TnFun("uncons", stack => {val l = stack.pop; stack.push(l.getList.head, TnList(l.getList.tail))})
 object NullList extends TnFun("[]", _.push(TnList()))
 object One extends TnFun("1", _.push(1))
-object Ifte extends TnFun("ifte", stack => ???)
-  /*stack => {val (f, t, b) = (stack.pop, stack.pop, stack.pop);
-  b.getList.foreach(_(stack));
-  if(stack.pop.asInt != 0)
-    t.getList.foreach(_(stack))
-  else
-    f.getList.foreach(_(stack))})*/ {
-
-  override def apply(stack: mutable.Stack[TnObj]): Stack[TnObj] = {
-    def lsRecur(ls: List[TnObj]): Option[TnObj] = ls match {
-      case el :: Nil => Some(el)
-      case el :: ls => {el(stack); lsRecur(ls)}
-      case _ => None
-    }
-    val (f, t, b) = (stack.pop, stack.pop, stack.pop)
-    b.getList.foreach(_(stack))
-    if(stack.pop().asInt != 0) {
-      val last = lsRecur(t.getList)
-      if(last.isDefined && last.get == Ifte) Ifte(stack) else last.get(stack)
-    } else {
-      val last = lsRecur(f.getList)
-      if(last.isDefined && last.get == Ifte) Ifte(stack) else last.get(stack)
-    }
-  }
-}
+object Ifte extends TnFun("ifte", RecurImpl.ifteImpl(_).result)
 object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop);
   if(name.asString == "sym")
     State.table.replace(body.asInstanceOf[TnList])
