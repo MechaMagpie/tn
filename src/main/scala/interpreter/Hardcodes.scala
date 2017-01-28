@@ -19,13 +19,15 @@ object Hardcodes {
   tnwhile.list =  List(TnList(Dup), Dip, Swap, TnList(Dup), Dip, Swap, TnList(tnwhile, I), Cons, Cons, TnList(I),
     Uncons, Pop, Swap, Cons, Cons, NullList, Ifte)
   val not = TnList(NullList, Cons, TnList(0), TnList(1), Ifte)
-  val and = TnList(NullList, Cons, TnList(NullList, Cons, TnList(1), TnList(0), Ifte), TnList(0), Ifte)
+  val and = TnList(NullList, Cons, TnList(NullList, Cons, TnList(1), TnList(0), Ifte), TnList(Pop, 0), Ifte)
   val or = TnList(not, Dip, not, I, and, I, not, I)
   val xor = TnList(NullList, Cons, TnList(NullList, Cons, TnList(0), TnList(1), Ifte),
     TnList(NullList, Cons, TnList(1), TnList(0), Ifte), Ifte)
 
   val fold = TnList(TnList(TnList(Dup, IsEmpty, not, I), Dip, Swap),
     TnList(Dup, TnList(TnList(Uncons), Dip, Swap), Dip, TnList(TnList(I), Dip), Dip), tnwhile, I, Pop, Pop)
+
+  val anyTrue = TnList(One, Swap, TnList(Dip, or, I), fold, I)
 
   val newPull = TnList(); newPull.list = List(Pull, Dup, TnList(), TnList(TnList(Swap, Dup, space, ListEq),
     TnList(Pop, Pop, ref("pull"), I), TnList(Swap), Ifte), TnList(), Ifte)
@@ -67,7 +69,8 @@ object Hardcodes {
     ("pu[[", innerPull),
     ("chars", chars),
     ("reverse", reverse),
-    ("fold", fold)
+    ("fold", fold),
+    ("any", anyTrue)
   )
 
   def build(): Unit = {
