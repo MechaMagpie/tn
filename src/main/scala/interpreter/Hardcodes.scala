@@ -23,6 +23,10 @@ object Hardcodes {
   val or = TnList(not, Dip, not, I, and, I, not, I)
   val xor = TnList(NullList, Cons, TnList(NullList, Cons, TnList(0), TnList(1), Ifte),
     TnList(NullList, Cons, TnList(1), TnList(0), Ifte), Ifte)
+
+  val fold = TnList(TnList(TnList(Dup, IsEmpty, not, I), Dip, Swap),
+    TnList(Dup, TnList(TnList(Uncons), Dip, Swap), Dip, TnList(TnList(I), Dip), Dip), tnwhile, I, Pop, Pop)
+
   val newPull = TnList(); newPull.list = List(Pull, Dup, TnList(), TnList(TnList(Swap, Dup, space, ListEq),
     TnList(Pop, Pop, ref("pull"), I), TnList(Swap), Ifte), TnList(), Ifte)
 
@@ -36,9 +40,13 @@ object Hardcodes {
   leftBrace.list = List(w, TnList(innerPull, I, Pop, TnList(Dup, rightBrace, ListEq), TnList(0),
     TnList(spill, I, 1), Ifte), NullList, tnwhile, I, Pop, NullList, TnList(Swap, Dup, w, ListEq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop)
-  val allAscii = (32 to 126).toList
+  val allAscii = (32 to 126)
   val chars = TnList(TnList(TnList(TnInt('m') :: fromString("chars") ::
     (for(i <- allAscii) yield TnList(TnList(i), TnList(i))).toList)))
+  val reverse = TnList(NullList, Swap, TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip),
+    tnwhile, I, Pop)
+  val strQuote = TnList(Sym, "sym", chars, I, Def, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
+    TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, "sym", Swap, Def)
 
   val functions: List[(String, TnList)] = List(
     (" ", space),
@@ -57,7 +65,9 @@ object Hardcodes {
     ("spill", spill),
     ("pull", newPull),
     ("pu[[", innerPull),
-    ("chars", chars)
+    ("chars", chars),
+    ("reverse", reverse),
+    ("fold", fold)
   )
 
   def build(): Unit = {
