@@ -3,9 +3,6 @@ import java.io._
 
 import collection.mutable.Stack
 
-/**
-  * Created by erik on 1/13/17.
-  */
 object State {
   val stack = Stack[TnObj]()
   val table = FunctionTable

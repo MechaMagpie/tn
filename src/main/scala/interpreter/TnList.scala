@@ -2,9 +2,6 @@ package main.scala.interpreter
 import collection.mutable.Stack
 import scala.collection.mutable
 
-/**
-  * Created by erik on 1/11/17.
-  */
 class TnList(var list: List[TnObj]) extends TnObj{
   override val hashCode = util.Random.nextInt;
 

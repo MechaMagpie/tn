@@ -1,8 +1,5 @@
 package main.scala.interpreter
 
-/**
-  * Created by erik on 1/15/17.
-  */
 object Parser {
   var pos: Int = 0
   var line: Option[String] = None

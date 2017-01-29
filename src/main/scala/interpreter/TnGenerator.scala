@@ -1,8 +1,5 @@
 package main.scala.interpreter
 
-/**
-  * Created by erik on 1/13/17.
-  */
 object TnGenerator extends Iterable[String] {
   class TnGenIterator extends Iterator[String] {
     var n = 0

@@ -2,7 +2,6 @@ package main.scala.interpreter
 
 import collection.mutable.Stack
 import scala.annotation.tailrec
-import scala.collection.mutable
 import scala.util.control.TailCalls._
 
 class TnFun(val name: String, function: Stack[TnObj] => Unit) extends TnObj {
@@ -41,8 +40,8 @@ object RecurImpl {
     last match {
       case Some(I) => tailcall(iImpl(stk))
       case Some(Ifte) => tailcall(ifteImpl(stk))
-      case Some(obj) => {obj(stk); done()}
-      case None => done()
+      case Some(obj) => {obj(stk); done(Unit)}
+      case None => done(Unit)
     }
   }
 
@@ -52,8 +51,8 @@ object RecurImpl {
     last match {
       case Some(I) => tailcall(iImpl(stk))
       case Some(Ifte) => tailcall(ifteImpl(stk))
-      case Some(obj) => {obj(stk); done()}
-      case None => done()
+      case Some(obj) => {obj(stk); done(Unit)}
+      case None => done(Unit)
     }
   }
 }
@@ -76,12 +75,9 @@ object Uncons extends
 object NullList extends TnFun("[]", _.push(TnList()))
 object One extends TnFun("1", _.push(1))
 object Ifte extends TnFun("ifte", RecurImpl.ifteImpl(_).result)
-object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop);
-  if(name.asString == "sym")
-    State.table.replace(body.asInstanceOf[TnList])
-  else
-    State.table.defun(name, body)})
+object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop); State.table.defun(name, body)})
 object Undef extends TnFun("undef", stack => State.table.undefun(stack.pop))
+object Table extends TnFun("table", stack => State.table.replace(stack.pop.asInstanceOf[TnList]))
 object Sym extends TnFun("sym", _.push(State.table.fnLs.copy))
 object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].copy))
 object Intern extends TnFun("intern", stack => stack.push(State.table.map(stack.pop.asString)))

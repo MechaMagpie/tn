@@ -1,8 +1,5 @@
 package main.scala.interpreter
 
-/**
-  * Created by erik on 1/17/17.
-  */
 object Hardcodes {
   /**
     * Danger! Danger!
@@ -10,7 +7,6 @@ object Hardcodes {
   implicit def fromList(list: List[TnObj]): TnList = TnList(list)
   private def ref(name: String) = State.table.map(name)
 
-  val i = TnList(TnList(), TnList(0), Ifte)
   val space = TnList()
   val tab = TnList()
   val rotate = TnList(Swap, TnList(Swap), Dip, Swap)
@@ -47,8 +43,10 @@ object Hardcodes {
     (for(i <- allAscii) yield TnList(TnList(i), TnList(i))).toList)))
   val reverse = TnList(NullList, Swap, TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip),
     tnwhile, I, Pop)
-  val strQuote = TnList(Sym, "sym", chars, I, Def, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
-    TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, "sym", Swap, Def)
+  /*val strQuote = TnList(Sym, "sym", chars, I, Def, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
+    TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, "sym", Swap, Def)*/
+  val strQuote = TnList(Sym, chars, I, Table, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
+    TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
 
   val functions: List[(String, TnList)] = List(
     (" ", space),

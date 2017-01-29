@@ -1,9 +1,7 @@
 package main.scala.interpreter
 import collection.mutable.Stack
 
-/**
-  * Created by erik on 1/11/17.
-  */
+
 trait TnObj {
   def apply(stack: Stack[TnObj]): Stack[TnObj] = stack.push(this)
 
