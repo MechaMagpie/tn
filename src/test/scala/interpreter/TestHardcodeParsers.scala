@@ -43,4 +43,9 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
     Parser.line = Some("not]")
     leavesString(leftBrace)()(not)
   }
+
+  test("lists may contain strings") {
+    Parser.line = Some("[\"www\"]")
+    leavesString(innerPull, TnList(Pop, Uncons, Pop))()(TnList("www"))
+  }
 }

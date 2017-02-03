@@ -30,23 +30,21 @@ object Hardcodes {
 
   val print = TnList(TnList(Dup, IsEmpty, not, I), TnList(Swap), tnwhile, I)
   val spill = TnList(TnList(Dup, IsEmpty, not, I), TnList(Uncons), tnwhile, I, Pop)
-  val w = TnList(TnInt('w'))
-  val leftBrace = TnList();
-  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, leftBrace, ListEq), TnList(Swap, Pop, I, NullList,
-    Cons, One), TnList(Swap), Ifte)
-  val rightBrace = TnList(TnInt('s'))
-  leftBrace.list = List(w, TnList(innerPull, I, Pop, TnList(Dup, rightBrace, ListEq), TnList(0),
-    TnList(spill, I, 1), Ifte), NullList, tnwhile, I, Pop, NullList, TnList(Swap, Dup, w, ListEq, not, I),
-    TnList(Swap, Cons), tnwhile, I, Pop)
+  val reverse = TnList(NullList, Swap, TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip),
+    tnwhile, I, Pop)
   val allAscii = (32 to 126)
   val chars = TnList(TnList(TnList(TnInt('m') :: fromString("chars") ::
     (for(i <- allAscii) yield TnList(TnList(i), TnList(i))).toList)))
-  val reverse = TnList(NullList, Swap, TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip),
-    tnwhile, I, Pop)
-  /*val strQuote = TnList(Sym, "sym", chars, I, Def, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
-    TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, "sym", Swap, Def)*/
   val strQuote = TnList(Sym, chars, I, Table, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
+  val w = TnList(TnInt('w'))
+  val leftBrace = TnList();
+  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, leftBrace, ListEq),
+    TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, strQuote, ListEq),
+      TnList(Swap, Pop, I, NullList, Cons, One), TnList(Swap), Ifte), Ifte)
+  val rightBrace = TnList(TnInt('s'))
+  leftBrace.list =
+    List(TnList(innerPull, I, "]", Intern, ListEq, not, I), TnList(Swap, Cons), tnwhile, I, Pop, reverse, I)
 
   val functions: List[(String, TnList)] = List(
     (" ", space),
@@ -68,7 +66,8 @@ object Hardcodes {
     ("chars", chars),
     ("reverse", reverse),
     ("fold", fold),
-    ("any", anyTrue)
+    ("any", anyTrue),
+    ("\"", strQuote)
   )
 
   def build(): Unit = {

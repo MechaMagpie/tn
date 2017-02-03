@@ -32,11 +32,7 @@ object RecurImpl {
     }
   }
 
-  def ifteImpl(stk: Stack[TnObj]): TailRec[Unit] = {
-    val (f, t, b) = (stk.pop, stk.pop, stk.pop)
-    b.getList.foreach(_(stk))
-    val active = if(stk.pop.asInt != 0) t else f
-    val last = lsRecur(active.getList, stk)
+  def nextAction(stk: Stack[TnObj], last: Option[TnObj]): TailRec[Unit] = {
     last match {
       case Some(I) => tailcall(iImpl(stk))
       case Some(Ifte) => tailcall(ifteImpl(stk))
@@ -45,15 +41,18 @@ object RecurImpl {
     }
   }
 
+  def ifteImpl(stk: Stack[TnObj]): TailRec[Unit] = {
+    val (f, t, b) = (stk.pop, stk.pop, stk.pop)
+    b.getList.foreach(_(stk))
+    val active = if(stk.pop.asInt != 0) t else f
+    val last = lsRecur(active.getList, stk)
+    nextAction(stk, last)
+  }
+
   def iImpl(stk: Stack[TnObj]): TailRec[Unit] = {
     val ls = stk.pop
     val last = lsRecur(ls.getList, stk)
-    last match {
-      case Some(I) => tailcall(iImpl(stk))
-      case Some(Ifte) => tailcall(ifteImpl(stk))
-      case Some(obj) => {obj(stk); done(Unit)}
-      case None => done(Unit)
-    }
+    nextAction(stk, last)
   }
 }
 

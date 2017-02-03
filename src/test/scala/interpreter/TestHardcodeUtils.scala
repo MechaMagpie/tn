@@ -69,6 +69,7 @@ class TestHardcodeUtils extends FunSuite with BeforeAndAfterAll {
     leavesStack(tnwhile)(TnList(Dup, One, Sub), TnList(Dup), 10)(0,1,2,3,4,5,6,7,8,9,10)
   }
 
+  //TODO: find out a way to replace this value with the maximum stack depth (leaving it hardcoded for now)
   test("while should use tail-call optimized ifte and i") {
     leavesStack(tnwhile)(TnList(One, Sub), TnList(Dup), 50000)(0)
   }

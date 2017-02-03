@@ -35,7 +35,6 @@ object FunctionTable {
     require(body.isList, body + " is not a list")
     if (map.keySet.contains(name.asString)) {
       map(name.asString).list = body.getList
-      update
     } else {
       val firstModule = fnLs.getList.head.asInstanceOf[TnList]
       val m :: moduleName :: rest = firstModule.getList
