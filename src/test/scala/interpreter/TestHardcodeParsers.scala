@@ -2,6 +2,7 @@ package interpreter
 
 import main.scala.interpreter._
 import Hardcodes._
+import TestHelpers._
 import org.scalatest.{BeforeAndAfter, FunSuite}
 import collection.mutable.Stack
 
@@ -12,11 +13,6 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
     Parser.line = None; Parser.pos = 0
   }
 
-  def leavesString(fun: TnList*)(before: TnObj*)(after: TnList): Unit = {
-    val stk = Stack[TnObj](before:_*)
-    fun.foreach(_.getList.foreach(_(stk)))
-    assert(stk.pop.toString == after.toString)
-  }
 
   test("\" should parse remainder of string") {
     Parser.line = Some("this is a test\"")

@@ -2,6 +2,7 @@ package interpreter
 
 import main.scala.interpreter.Hardcodes._
 import main.scala.interpreter._
+import TestHelpers._
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 import scala.collection.mutable.Stack
@@ -9,28 +10,6 @@ import scala.collection.mutable.Stack
 class TestHardcodeUtils extends FunSuite with BeforeAndAfterAll {
   override def beforeAll() = {
     Main.setup()
-  }
-
-  def newStack() = Stack[TnObj]()
-  def newStack(args: TnObj*) = Stack[TnObj](args:_*)
-
-  def leavesStack(fun: TnList)(before: TnObj*)(after: TnObj*): Unit = {
-    val stk = newStack(before:_*)
-    fun.eval(stk)
-    assert(stk == newStack(after:_*))
-  }
-
-  /**
-    * This is hacky
-    */
-  def leavesString(fun: TnList)(before: TnObj*)(after: TnList): Unit = {
-    val stk = newStack(before:_*)
-    fun.eval(stk)
-    assert(stk.pop.toString == after.toString)
-  }
-
-  implicit class withDirectEval(ls: TnList) {
-    def eval(stk: Stack[TnObj]) = ls.getList.foreach(_(stk))
   }
 
   test("rotate should rotate top of stack") {
