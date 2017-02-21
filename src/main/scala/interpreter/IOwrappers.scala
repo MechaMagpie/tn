@@ -14,6 +14,7 @@ class FileInputQueue(filename: String) extends InputQueue {
   val reader = new FileReader(filename)
   val queue = Queue[Char]()
   while(reader.ready) queue += reader.read.toChar
+  queue += 0x4
 
   override def startsWith(str: String) = queue.startsWith(str)
 
