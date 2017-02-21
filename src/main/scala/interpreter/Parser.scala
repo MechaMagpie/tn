@@ -35,4 +35,9 @@ object Parser {
       case null => line = None
     }
   }
+
+  def clear(): Unit = {
+    pos = 0;
+    line = None;
+  }
 }

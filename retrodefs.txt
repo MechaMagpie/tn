@@ -1,0 +1,22 @@
+[swap [swap] dip swap] "rotate" def
+[[dup] dip] "dupd" def
+[[dup] dip swap [dup] dip swap [[while] i] cons cons [i] uncons pop swap cons cons [] ifte] "while" def
+[[] cons [0] [1] ifte] "not" def
+[[] cons [[] cons [1] [0] ifte] [pop 0] ifte] "and" def
+[[not] dip [not] i [and] i [not] i] "or" def
+[[] cons [[] cons [0] [1] ifte] [[] cons [1] [0] ifte] ifte] "xor" def
+[[[dup null? [not] i] dip swap] [dup [[uncons] dip swap] dip [[i] dip] dip] [while] i pop pop] "fold" def
+[1 swap [dip [or] i] [fold] i] "any" def
+[pull dup [] [[swap dup [whitespace] '=] [pop pop [pull] i] [swap] ifte] [] ifte] "pull" def
+[[dup null? [not] i] [swap] [while] i] "print" def
+[[dup null? [not] i] [uncons] [while] i pop] "spill" def
+[[] swap [dup null? [not] i] [uncons [swap cons] dip] [while] i pop] "reverse" def
+[sym [chars] i table [] [pull pop i dup " = [not] i] [swap cons] [while] i pop [reverse] i swap table] ["] def
+[] "]" def
+[[pull] i swap [dup [[]	'=] [swap pop i [] cons 1] [[dup ["] '=] [swap pop i [] cons 1] [swap] ifte] ifte] "pu[[" def
+-- BUGGED --
+[[w] [[pu[[] i pop [dup []] '=] [0] [[spill] i 1] ifte] [] [while] i pop [] [swap dup [w] '= [not] i] [swap cons] [while] i pop] "[" def
+
+
+
+[[] [pu[] pop dup "]" intern '= [not] i] [swap cons] [while] i pop [reverse] i]

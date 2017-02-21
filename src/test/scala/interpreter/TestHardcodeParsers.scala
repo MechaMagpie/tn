@@ -8,6 +8,12 @@ import collection.mutable.Stack
 
 class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
 
+  def leavesString(fun: TnList*)(before: TnObj*)(after: TnList): Unit = {
+    val stk = Stack[TnObj](before:_*)
+    fun.foreach(_.getList.foreach(_(stk)))
+    assert(stk.pop.toString == after.toString)
+  }
+
   before {
     Main.setup()
     Parser.line = None; Parser.pos = 0

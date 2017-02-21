@@ -34,6 +34,7 @@ The following functions should be built into the interpreter
 | ifte	 | [b] [t] [f] 	 | ...	  	| Executes b as a test for wheather to execute t or f	      	|
 | def	 | [name] [body] | ...	  	| Defines a new function   	      	 	      	      			|
 | undef	 | [name] 	 	 | ...	  	| Undefines a function				      	      				|
+| table	 | [table]		 | ...		| Replaces the function table									|
 | sym	 | ...		 	 | table  	| Pushes a copy of the current function table		      		|
 | copy	 | [l]		 	 | [l']		| Replaces top list with deep copy of same				  		|
 | intern | [name]	 	 | [body]	| Retrieves function by name from the table				  		|

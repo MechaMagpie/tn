@@ -8,6 +8,18 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import scala.collection.mutable.Stack
 
 class TestHardcodeUtils extends FunSuite with BeforeAndAfterAll {
+  def leavesString(fun: TnList*)(before: TnObj*)(after: TnList): Unit = {
+    val stk = Stack[TnObj](before:_*)
+    fun.foreach(_.getList.foreach(_(stk)))
+    assert(stk.pop.toString == after.toString)
+  }
+
+  def leavesStack(fun: TnList)(before: TnObj*)(after: TnObj*): Unit = {
+    val stk = Stack(before:_*)
+    fun.eval(stk)
+    assert(stk == Stack(after:_*))
+  }
+
   override def beforeAll() = {
     Main.setup()
   }
@@ -65,7 +77,15 @@ class TestHardcodeUtils extends FunSuite with BeforeAndAfterAll {
     leavesStack(anyTrue)(TnList(TnList(IsInt), TnList(IsInt), TnList(IsInt)), TnList(), TnList(), 1)(1)
   }
 
+  test("any should yield false if no predicate holds") {
+    leavesStack(anyTrue)(TnList(TnList(IsInt), TnList(IsInt), TnList(IsInt)), TnList(), TnList(), NullList)(0)
+  }
+
   test("reverse should reverse an arbitrary list") {
     leavesString(reverse)(TnList(1,2,3,4,5))(TnList(5,4,3,2,1))
+  }
+
+  test("smash should empty a list into the list below") {
+    leavesString(smash)(TnList(4,5,6), TnList(3,2,1))(TnList(6,5,4,3,2,1))
   }
 }

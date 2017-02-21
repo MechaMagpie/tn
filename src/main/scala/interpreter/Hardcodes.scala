@@ -23,28 +23,47 @@ object Hardcodes {
   val fold = TnList(TnList(TnList(Dup, IsEmpty, not, I), Dip, Swap),
     TnList(Dup, TnList(TnList(Uncons), Dip, Swap), Dip, TnList(TnList(I), Dip), Dip), tnwhile, I, Pop, Pop)
 
-  val anyTrue = TnList(One, Swap, TnList(Dip, or, I), fold, I)
+  val anyTrue = TnList(0, Swap, TnList(Dip, or, I), fold, I)
 
-  val newPull = TnList(); newPull.list = List(Pull, Dup, TnList(), TnList(TnList(Swap, Dup, space, ListEq),
-    TnList(Pop, Pop, ref("pull"), I), TnList(Swap), Ifte), TnList(), Ifte)
+  val numTable = TnList(TnList(TnList(TnInt('m') :: fromString("numbers") ::
+    (for(i <- 0 to 9) yield TnList(i.toString, TnList(i))).toList)))
+  val parseNum = TnList(Sym, Swap, numTable, I, Table,
+    TnList(Pull), TnList(Swap, 10, Mul, Swap, Uncons, Pop, Add), tnwhile, I, Pop, Swap, Table)
 
-  val print = TnList(TnList(Dup, IsEmpty, not, I), TnList(Swap), tnwhile, I)
+  val numbers: List[(String, TnList)] = (for(i <- 0 to 9) yield (i.toString, TnList(i, parseNum, I))).toList
+
+  val numRefs = numbers.head._2 :: ref("1") :: numbers.tail.tail.map(_._2)
+  val isNum = TnList(TnList(for(i <- numRefs) yield TnList(Dup, i, ListEq)), anyTrue, I)
+
+  val newPull = TnList(); newPull.list = List(Pull, Dup,
+    TnList(),
+    TnList(TnList(Swap, Dup, space, ListEq),
+      TnList(Pop, Pop, ref("pull"), I), TnList(
+        TnList("number?", Intern, I),
+        TnList(I, NullList, Cons, Swap),
+        TnList(Swap), Ifte
+    ), Ifte), TnList(), Ifte)
+
+  val print = TnList(TnList(Dup, IsEmpty, not, I), TnList(Uncons, Swap, Put), tnwhile, I, Pop)
   val spill = TnList(TnList(Dup, IsEmpty, not, I), TnList(Uncons), tnwhile, I, Pop)
+  val smash = TnList(TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip), tnwhile, I, Pop)
   val reverse = TnList(NullList, Swap, TnList(Dup, IsEmpty, not, I), TnList(Uncons, TnList(Swap, Cons), Dip),
     tnwhile, I, Pop)
-  val allAscii = (32 to 126)
+  val allAscii = 32 to 126
   val chars = TnList(TnList(TnList(TnInt('m') :: fromString("chars") ::
     (for(i <- allAscii) yield TnList(TnList(i), TnList(i))).toList)))
   val strQuote = TnList(Sym, chars, I, Table, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
   val w = TnList(TnInt('w'))
-  val leftBrace = TnList();
-  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, leftBrace, ListEq),
-    TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, strQuote, ListEq),
+  val leftBrace = TnList()
+  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
+    TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, "\"", Intern, ListEq),
       TnList(Swap, Pop, I, NullList, Cons, One), TnList(Swap), Ifte), Ifte)
   val rightBrace = TnList(TnInt('s'))
   leftBrace.list =
-    List(TnList(innerPull, I, "]", Intern, ListEq, not, I), TnList(Swap, Cons), tnwhile, I, Pop, reverse, I)
+    List(NullList, TnList(innerPull, I, Pop, Dup, "]", Intern, ListEq, not, I),
+      TnList(smash, I), tnwhile, I, Pop, reverse, I)
+
 
   val functions: List[(String, TnList)] = List(
     (" ", space),
@@ -61,16 +80,20 @@ object Hardcodes {
     ("[", leftBrace),
     ("print", print),
     ("spill", spill),
+    ("smash", smash),
     ("pull", newPull),
     ("pu[[", innerPull),
     ("chars", chars),
     ("reverse", reverse),
     ("fold", fold),
     ("any", anyTrue),
-    ("\"", strQuote)
+    ("\"", strQuote),
+    ("parsenum", parseNum),
+    ("numtable", numTable),
+    ("number?", isNum)
   )
 
   def build(): Unit = {
-    for((name, body) <- functions) State.table.defun(name, body)
+    for((name, body) <- functions ++ numbers) State.table.defun(name, body)
   }
 }
