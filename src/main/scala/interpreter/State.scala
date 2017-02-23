@@ -1,14 +1,23 @@
 package main.scala.interpreter
 import java.io._
 
+import interpreter.{InputQueue, Output, StdInReader, StdOutput}
+
 import collection.mutable.Stack
 
 object State {
   val stack = Stack[TnObj]()
   val table = FunctionTable
+  table.replace(TnList(Functions.defaultModule))
+  Hardcodes.build()
+  val safe = table.fnLs.copy
 
-  var input = new BufferedReader(new InputStreamReader(System.in))
-  var output = System.out
+  def restore(): Unit = table.replace(safe.copy)
+
+  val files = Stack[InputQueue](StdInReader)
+
+  def input = files.head
+  var output: Output = StdOutput
 }
 
 object FunctionTable {

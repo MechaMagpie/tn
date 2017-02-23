@@ -3,22 +3,16 @@ package interpreter
 import main.scala.interpreter._
 import Hardcodes._
 import TestHelpers._
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSuite}
 import collection.mutable.Stack
 
-class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
+class TestHardcodeParsers extends FunSuite with BeforeAndAfter with BeforeAndAfterAll {
 
-  def leavesString(fun: TnList*)(before: TnObj*)(after: TnList): Unit = {
-    val stk = Stack[TnObj](before:_*)
-    fun.foreach(_.getList.foreach(_(stk)))
-    assert(stk.pop.toString == after.toString)
-  }
+  override def afterAll = State.restore
 
-  def giveLine(str: String) = Parser.line = Some(str)
-
-  before {
-    Main.setup()
-    Parser.line = None; Parser.pos = 0
+  after {
+    State.files.clear
+    State.files.push(StdInReader)
   }
 
 
@@ -30,7 +24,7 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
   test("\" should fully restore function table") {
     val before = State.table.fnLs.copy()
     giveLine("test\"")
-    leavesString(strQuote, TnList(Pop, Sym))()(before)
+    leavesString(strQuote, TnList(Pop, Sym, Copy))()(before)
   }
 
   test("[ should parse remainder of list") {
@@ -41,11 +35,6 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter {
   test("helper function pu[[ should yield a list, if given one") {
     giveLine("[[]]")
     leavesString(innerPull, TnList(Pop, Uncons, Pop))()(TnList(NullList))
-  }
-
-  test("list parser should unquote given function") {
-    giveLine("not]")
-    leavesString(leftBrace)()(not)
   }
 
   test("lists may contain strings") {

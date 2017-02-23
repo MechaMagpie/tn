@@ -7,8 +7,7 @@ object Hardcodes {
   implicit def fromList(list: List[TnObj]): TnList = TnList(list)
   private def ref(name: String) = State.table.map(name)
 
-  val space = TnList()
-  val tab = TnList()
+  val whitespace = TnList()
   val rotate = TnList(Swap, TnList(Swap), Dip, Swap)
   val dupd = TnList(TnList(Dup), Dip)
   val tnwhile = TnList()
@@ -32,12 +31,12 @@ object Hardcodes {
 
   val numbers: List[(String, TnList)] = (for(i <- 0 to 9) yield (i.toString, TnList(i, parseNum, I))).toList
 
-  val numRefs = numbers.head._2 :: ref("1") :: numbers.tail.tail.map(_._2)
+  lazy val numRefs = numbers.head._2 :: ref("1") :: numbers.tail.tail.map(_._2)
   val isNum = TnList(TnList(for(i <- numRefs) yield TnList(Dup, i, ListEq)), anyTrue, I)
 
-  val newPull = TnList(); newPull.list = List(Pull, Dup,
+  lazy val newPull = TnList(); newPull.list = List(Pull, Dup,
     TnList(),
-    TnList(TnList(Swap, Dup, space, ListEq),
+    TnList(TnList(Swap, Dup, whitespace, ListEq),
       TnList(Pop, Pop, ref("pull"), I), TnList(
         TnList("number?", Intern, I),
         TnList(I, NullList, Cons, Swap),
@@ -56,7 +55,7 @@ object Hardcodes {
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
   val w = TnList(TnInt('w'))
   val leftBrace = TnList()
-  val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
+  lazy val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
     TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, "\"", Intern, ListEq),
       TnList(Swap, Pop, I, NullList, Cons, One), TnList(Swap), Ifte), Ifte)
   val rightBrace = TnList(TnInt('s'))
@@ -66,8 +65,11 @@ object Hardcodes {
 
 
   val functions: List[(String, TnList)] = List(
-    (" ", space),
-    //("\t", tab),
+    (" ", whitespace),
+    ("\t", whitespace),
+    ("\n", whitespace),
+    ("\r", whitespace),
+    ("\u0004", whitespace),
     ("rotate", rotate),
     ("dupd", dupd),
     ("while", tnwhile),

@@ -1,43 +1,23 @@
 package main.scala.interpreter
 
 object Parser {
-  var pos: Int = 0
-  var line: Option[String] = None
 
   def parseNext(): Option[TnList] = {
-    checkLine
-    line match {
+    val input = State.input
+    val name = State.table.nameVector.find(input.startsWith(_))
+    name match {
       case Some(str) => {
-        val name = State.table.nameVector.find(o => str.regionMatches(pos, o, 0, o.length))
-        name match {
-          case Some(str) => {
-            pos += str.length
-            Some(State.table.map(str))
-          }
-          case None => None
-        }
+        input.advance(str.length)
+        Some(State.table.map(str))
+      }
+      case None if input.empty => {
+        if(input.finished)
+          State.files.pop
+        else
+          input.block
+        parseNext
       }
       case None => None
     }
-  }
-
-  private def checkLine: Unit = {
-    line match {
-      case Some(str) if pos == str.length => refill
-      case None => refill
-      case _ => {}
-    }
-  }
-
-  private def refill: Unit = {
-    State.input.readLine() match {
-      case str: String => {line = Some(str); pos = 0}
-      case null => line = None
-    }
-  }
-
-  def clear(): Unit = {
-    pos = 0;
-    line = None;
   }
 }

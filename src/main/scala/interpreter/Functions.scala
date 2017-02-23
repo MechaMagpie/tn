@@ -1,5 +1,7 @@
 package main.scala.interpreter
 
+import interpreter.{FileInputQueue, FileOutput, StdOutput}
+
 import collection.mutable.Stack
 import scala.annotation.tailrec
 import scala.util.control.TailCalls._
@@ -77,18 +79,20 @@ object Ifte extends TnFun("ifte", RecurImpl.ifteImpl(_).result)
 object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop); State.table.defun(name, body)})
 object Undef extends TnFun("undef", stack => State.table.undefun(stack.pop))
 object Table extends TnFun("table", stack => State.table.replace(stack.pop.asInstanceOf[TnList]))
-object Sym extends TnFun("sym", _.push(State.table.fnLs.copy))
+object Sym extends TnFun("sym", _.push(State.table.fnLs))
 object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].copy))
 object Intern extends TnFun("intern", stack => stack.push(State.table.map(stack.pop.asString)))
 object Pull extends TnFun("pull", stack => {
   val res = Parser.parseNext; res match {
     case Some(fun) => stack.push(fun, 1)
-    case None => stack.push(TnList(), 0)
-  }})
+    case None => stack.push(TnList(), 0)}})
 object Tn extends TnFun("tn", _.push(TnGenerator.find(!State.table.map.keySet.contains(_)).get))
-object Put extends TnFun("put", stack => State.output.print(stack.pop.asInt.toChar))
-object Input extends TnFun("input", stack => ???)
-object Output extends TnFun("output", stack => ???)
+object Put extends TnFun("put", stack => State.output.write(stack.pop.asInt.toChar))
+object Input extends TnFun("input", stack => State.files.push(new FileInputQueue(stack.pop.asString)))
+object Output extends TnFun(
+  "output", stack => State.output = stack.pop.asString match {
+    case "stdout" => StdOutput
+    case filename => new FileOutput(filename)})
 object Exit extends TnFun("exit", stack => ???)
 object Add extends ArithFun("+", _ + _)
 object Sub extends ArithFun("-", _ - _)
@@ -106,7 +110,7 @@ object IsEmpty extends TnFun("null?", stack => stack.push(if(stack.pop.getList.i
 
 object Functions {
   val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList, One, Ifte, Def, Undef, Sym, Copy,
-    Intern, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList)
+    Intern, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList, IsEmpty)
   val defaultModule = new TnList(TnInt('m') :: fromString("default") ::
     (for(fun <- allFunctions) yield TnList(fun.name, TnList(fun))).toList)
 }
