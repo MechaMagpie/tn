@@ -32,9 +32,9 @@ object Hardcodes {
   val numbers: List[(String, TnList)] = (for(i <- 0 to 9) yield (i.toString, TnList(i, parseNum, I))).toList
 
   lazy val numRefs = numbers.head._2 :: ref("1") :: numbers.tail.tail.map(_._2)
-  val isNum = TnList(TnList(for(i <- numRefs) yield TnList(Dup, i, ListEq)), anyTrue, I)
+  lazy val isNum = TnList(TnList(for(i <- numRefs) yield TnList(Dup, i, ListEq)), anyTrue, I)
 
-  lazy val newPull = TnList(); newPull.list = List(Pull, Dup,
+  lazy val newPull = TnList(Pull, Dup,
     TnList(),
     TnList(TnList(Swap, Dup, whitespace, ListEq),
       TnList(Pop, Pop, ref("pull"), I), TnList(
@@ -54,14 +54,12 @@ object Hardcodes {
   val strQuote = TnList(Sym, chars, I, Table, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
   val w = TnList(TnInt('w'))
-  val leftBrace = TnList()
+  lazy val leftBrace = TnList(NullList, TnList(innerPull, I, Pop, Dup, "]", Intern, ListEq, not, I),
+    TnList(smash, I), tnwhile, I, Pop, reverse, I)
   lazy val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
     TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, "\"", Intern, ListEq),
       TnList(Swap, Pop, I, NullList, Cons, One), TnList(Swap), Ifte), Ifte)
   val rightBrace = TnList(TnInt('s'))
-  leftBrace.list =
-    List(NullList, TnList(innerPull, I, Pop, Dup, "]", Intern, ListEq, not, I),
-      TnList(smash, I), tnwhile, I, Pop, reverse, I)
 
 
   val functions: List[(String, TnList)] = List(

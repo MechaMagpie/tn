@@ -11,9 +11,9 @@ object TestHelpers {
     assert(stk.pop.toString === after.toString)
   }
 
-  def leavesStack(fun: TnList)(before: TnObj*)(after: TnObj*): Unit = {
+  def leavesStack(fun: TnList*)(before: TnObj*)(after: TnObj*): Unit = {
     val stk = Stack(before:_*)
-    fun.eval(stk)
+    fun.foreach(_.eval(stk))
     assert(stk === Stack(after:_*))
   }
 

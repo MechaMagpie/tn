@@ -15,6 +15,10 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter with BeforeAndAft
     State.files.push(StdInReader)
   }
 
+  test("pull should work with numbers") {
+    giveLine("23 ")
+    leavesStack(State.table.map("pull"), TnList(Pop, Uncons, Pop))()(23)
+  }
 
   test("\" should parse remainder of string") {
     giveLine("this is a test\"")
