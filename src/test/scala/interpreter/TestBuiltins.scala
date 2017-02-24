@@ -19,9 +19,14 @@ class TestBuiltins extends FunSuite with BeforeAndAfterAll with BeforeAndAfter {
     Files.write(path, content.map(_.toByte).toArray)
   }
 
+  override def beforeAll() = {
+    Files.createDirectories(basePath)
+  }
+
   override def afterAll() = {
     for(file <- Files.newDirectoryStream(basePath))
       Files.deleteIfExists(file)
+    Files.deleteIfExists(basePath)
   }
 
   after {
