@@ -20,4 +20,8 @@ object Parser {
       case None => None
     }
   }
+
+  def getInput(): String = {
+    State.input.queue.mkString("")
+  }
 }

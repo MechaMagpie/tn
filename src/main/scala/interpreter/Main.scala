@@ -3,12 +3,24 @@ package main.scala.interpreter
 import interpreter.StdInReader
 
 object Main {
-  /*def setup(): Unit = {
-    State.table.replace(TnList(Functions.defaultModule.copy))
-    State.files.clear
-    State.files.push(StdInReader)
-    Hardcodes.build;
-  }*/
+  object ParserChoked extends Exception
 
+  def main(args: Array[String]): Unit = {
+    try {
+      while(true) {
+        val fun = Parser.parseNext()
+        fun match {
+          case Some(list) => list.getList.foreach(_(State.stack))
+          case _ => throw ParserChoked
+        }
+      }
+    } catch {
+      case ParserChoked => println("parser choked on input:\n" +
+        Parser.getInput +
+        "\nexiting...")
+      case StopProgram => println("exiting...")
+      case e: Exception => println("evaluation error: " + e.getMessage)
+    }
+  }
 
 }

@@ -93,7 +93,8 @@ object Output extends TnFun(
   "output", stack => State.output = stack.pop.asString match {
     case "stdout" => StdOutput
     case filename => new FileOutput(filename)})
-object Exit extends TnFun("exit", stack => ???)
+object StopProgram extends Throwable
+object Exit extends TnFun("exit", stack => throw StopProgram)
 object Add extends ArithFun("+", _ + _)
 object Sub extends ArithFun("-", _ - _)
 object Mul extends ArithFun("*", _ * _)
