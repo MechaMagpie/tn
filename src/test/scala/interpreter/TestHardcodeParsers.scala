@@ -32,8 +32,20 @@ class TestHardcodeParsers extends FunSuite with BeforeAndAfter with BeforeAndAft
   }
 
   test("[ should parse remainder of list") {
+    val u = State;
+    val w = Hardcodes.leftBrace
     giveLine("1 1 [ 1 ]]")
     leavesString(leftBrace)()(TnList(1,1, TnList(1)))
+  }
+
+  test("[ should not unquote results longer than one") {
+    giveLine("number?]")
+    leavesString(leftBrace)()(TnList(TnList(State.table.map("number?").list), I))
+  }
+
+  test("[ should unquote results with a single member") {
+    giveLine("%]")
+    leavesString(leftBrace)()(TnList(Mod))
   }
 
   test("helper function pu[[ should yield a list, if given one") {

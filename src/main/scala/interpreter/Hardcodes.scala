@@ -1,10 +1,6 @@
 package main.scala.interpreter
 
 object Hardcodes {
-  /**
-    * Danger! Danger!
-    */
-  implicit def fromList(list: List[TnObj]): TnList = TnList(list)
   private def ref(name: String) = State.table.map(name)
 
   val whitespace = TnList()
@@ -55,12 +51,12 @@ object Hardcodes {
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
   val w = TnList(TnInt('w'))
   lazy val leftBrace = TnList(NullList, TnList(innerPull, I, Pop, Dup, "]", Intern, ListEq, not, I),
-    TnList(smash, I), tnwhile, I, Pop, reverse, I)
+    TnList(TnList(Uncons, Dup, TnList(Cons), Dip, IsEmpty), smash,
+      TnList(Swap, Cons, TnList(I), Uncons, Pop, Swap, Cons), Ifte), tnwhile, I, Pop, reverse, I)
   lazy val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
     TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, "\"", Intern, ListEq),
       TnList(Swap, Pop, I, NullList, Cons, One), TnList(Swap), Ifte), Ifte)
   val rightBrace = TnList(TnInt('s'))
-
 
   val functions: List[(String, TnList)] = List(
     (" ", whitespace),
