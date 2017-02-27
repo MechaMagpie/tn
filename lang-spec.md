@@ -27,8 +27,8 @@ The following functions should be built into the interpreter
 | pull	 | ...		 	 | [body] bool  | Pulls next function, pushes it's body and true or pushes [] and false, without removing anything from the source  |
 | tn	 | ...		 	 | [name] 	| Pushes a temporary name      	       	  		      			|
 | put	 | x		 	 | ...		| Prints the character represented by x to current output     	|
-| input	 | [filename]	 | [previous]	| Changes source stream to "filename"			      		|
-| output | [filename]	 | [previous]	| Changes current output stream to "filename"		      	|
+| input	 | [filename]	 | ...		| Changes source stream to "filename"			      			|
+| output | [filename]	 | ...		| Changes current output stream to "filename"		      		|
 | exit	 | ...		 	 | 			| Halts the program	 	   			      						|
 | +	 	 | i1 i2	 	 | i1 + i2	| Adds two integers					      						|
 | -	 	 | i1 i2	 	 | i1 - i2	| Subtracts two integers				      					|
@@ -53,7 +53,7 @@ The following functions are predefined from the built-ins
 | dupd	 | y z		 	 | y y z	| Dups next to top element 										|
 | not	 | b 			 | ¬b  		| Negates top element											|
 | and	 | a b 			 | a ∧ b	| Yields conjunction of top elements							|
-| or	 | a b 			 | a ∧ b	| Yields disjunction of top elements							|
+| or	 | a b 			 | a ∨ b	| Yields disjunction of top elements							|
 | xor	 | a b 			 | a ⊕ b	| Yields exclusive disjunction of top elements					|
 | fold	 | [list] [fun]	 | result	| Folds list with given function  	  							|
 | any	 | [[pred]..]	 | bool		| Tests if any predicate from list holds						|
