@@ -22,7 +22,7 @@ class TnList(var list: List[TnObj]) extends TnObj{
   }
 
   override def isModule = list match {
-    case TnInt('m') :: name :: fns if name.isString && fns.forall(_.isFunction) => true
+    case TnInt('m') :: name :: fns if name.isString && fns.forall(f => f.isFunction || f.isModule) => true
     case _ => false
   }
 

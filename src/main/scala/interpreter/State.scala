@@ -31,11 +31,17 @@ object FunctionTable {
     map = Map[String, TnList]()
     nameMap = Map[TnList, String]()
     assert(fnLs.isTable)
-    for(module <- fnLs.getList; function <- module.getList.drop(2)) {
-      val name :: body :: Nil = function.getList
-      map += name.asString -> body.asInstanceOf[TnList]
-      nameMap += body.asInstanceOf[TnList] -> name.asString
+    def processModule(mod: TnObj): Unit = {
+      for(member <- mod.getList.drop(2)) member match {
+        case function if member.isFunction => {
+          val name :: body :: Nil = function.getList
+          map += name.asString -> body.asInstanceOf[TnList]
+          nameMap += body.asInstanceOf[TnList] -> name.asString
+        }
+        case module if member.isModule => processModule(module)
+      }
     }
+    for(module <- fnLs.getList) processModule(module)
     nameVector = map.keySet.toVector.sortBy(-_.length)
   }
 
