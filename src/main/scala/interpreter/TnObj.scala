@@ -5,17 +5,9 @@ import collection.mutable.Stack
 trait TnObj {
   def apply(stack: Stack[TnObj]): Stack[TnObj] = stack.push(this)
 
-  /*
-  These make no sense for general objects, but I'm too lazy to put isInstanceOf asInstanceOf everywhere
-  and it's more typesaaaafe~
-   */
-  def isChar = false
-  def isString = false
+
   def isList = false
   def isInt = false
-  def isFunction = false
-  def isModule = false
-  def isTable = false
   /*
   except for these, they'll crash the whole thing hard if not checked for
    */

@@ -33,12 +33,12 @@ object FunctionTable {
     assert(fnLs.isTable)
     def processModule(mod: TnObj): Unit = {
       for(member <- mod.getList.drop(2)) member match {
-        case function if member.isFunction => {
+        case function if member.testAs[TnList](_.isFunction) => {
           val name :: body :: Nil = function.getList
           map += name.asString -> body.asInstanceOf[TnList]
           nameMap += body.asInstanceOf[TnList] -> name.asString
         }
-        case module if member.isModule => processModule(module)
+        case module if member.testAs[TnList](_.isModule) => processModule(module)
       }
     }
     for(module <- fnLs.getList) processModule(module)
@@ -46,8 +46,8 @@ object FunctionTable {
   }
 
   def defun(name:TnObj, body:TnObj): Unit = {
-    require(name.isString, name + " is not a string")
-    require(body.isList, body + " is not a list")
+    require(name.testAs[TnList](_.isString), name + " is not a string")
+    require(body.isInstanceOf[TnList], body + " is not a list")
     if (map.keySet.contains(name.asString)) {
       map(name.asString).list = body.getList
     } else {
@@ -59,7 +59,7 @@ object FunctionTable {
   }
 
   def undefun(name:TnObj): Unit = {
-    require(name.isString)
+    require(name.testAs[TnList](_.isString))
     for(mod <- fnLs.getList) {
       val module = mod.asInstanceOf[TnList]
       val m :: moduleName :: moduleBody = module.list

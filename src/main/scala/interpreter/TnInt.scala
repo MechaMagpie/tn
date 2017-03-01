@@ -1,14 +1,12 @@
 package main.scala.interpreter
 
 case class TnInt(value: Int) extends TnObj {
-  override def isChar: Boolean = value > 0 && value < 127
+  def isChar: Boolean = value > 0 && value < 127
 
   override def asChar = {
     require(isChar)
     value.toChar
   }
-
-  override def isInt = true
 
   override def asInt = value
 

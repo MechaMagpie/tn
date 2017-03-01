@@ -104,9 +104,9 @@ object Lt extends ArithFun("<", (i1, i2) => if (i1 < i2) 1 else 0)
 object Gt extends ArithFun(">", (i1, i2) => if (i1 < i2) 1 else 0)
 object Eq extends ArithFun("=", (i1, i2) => if (i1 == i2) 1 else 0)
 object ListEq extends TnFun("'=", stack => {val (l1, l2) = (stack.pop, stack.pop);
-  stack.push(if(l1.isList && l2.isList && l1 == l2) 1 else 0)})
-object IsInt extends TnFun("int?", stack => stack.push(if(stack.pop.isInt) 1 else 0))
-object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isList) 1 else 0))
+  stack.push(if(l1.isInstanceOf[TnList] && l2.isInstanceOf[TnList] && l1 == l2) 1 else 0)})
+object IsInt extends TnFun("int?", stack => stack.push(if(stack.pop.isInstanceOf[TnInt]) 1 else 0))
+object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isInstanceOf[TnInt]) 1 else 0))
 object IsEmpty extends TnFun("null?", stack => stack.push(if(stack.pop.getList.isEmpty) 1 else 0))
 
 object Functions {

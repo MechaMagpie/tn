@@ -2,7 +2,7 @@ package main.scala.interpreter
 import collection.mutable.Stack
 import scala.collection.mutable
 
-class TnList(var list: List[TnObj]) extends TnObj{
+class TnList(var list: List[TnObj]) extends TnObj {
   override val hashCode = util.Random.nextInt;
 
   override def equals(obj: Any): Boolean = obj match {
@@ -10,23 +10,22 @@ class TnList(var list: List[TnObj]) extends TnObj{
     case _ => false
   }
 
-  override def isList = true
-
-  override def isString = list.forall(_.isChar)
+  def isString = list.forall(_.testAs[TnInt](_.isChar))
 
   override def asString: String = list.map(_.asChar).mkString
 
-  override def isFunction = list match {
-    case name :: body :: Nil if name.isString && body.isList => true
+  def isFunction = list match {
+    case name :: body :: Nil if name.testAs[TnList](_.isString) && body.isInstanceOf[TnList] => true
     case _ => false
   }
 
-  override def isModule = list match {
-    case TnInt('m') :: name :: fns if name.isString && fns.forall(f => f.isFunction || f.isModule) => true
+  def isModule: Boolean = list match {
+    case TnInt('m') :: name :: fns if name.testAs[TnList](_.isString)
+      && fns.forall(_.testAs[TnList](f => f.isFunction || f.isModule)) => true
     case _ => false
   }
 
-  override def isTable = list.forall(_.isModule)
+  def isTable = list.forall(_.testAs[TnList](_.isModule))
 
   override def getList = list
 
