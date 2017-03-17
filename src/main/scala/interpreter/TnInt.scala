@@ -11,4 +11,6 @@ case class TnInt(value: Int) extends TnObj {
   override def asInt = value
 
   override def toString: String = value.toString
+
+  override def getList: List[TnObj] = throw new NotImplementedError("Number was " + value + " btw.")
 }

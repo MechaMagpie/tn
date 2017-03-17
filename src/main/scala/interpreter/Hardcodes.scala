@@ -50,8 +50,9 @@ object Hardcodes {
   val strQuote = TnList(Sym, chars, I, Table, NullList, TnList(Pull, Pop, I, Dup, TnInt('"'), Eq, not, I),
     TnList(Swap, Cons), tnwhile, I, Pop, reverse, I, Swap, Table)
   val w = TnList(TnInt('w'))
+  val short = TnList(Dup, TnList(IsEmpty), TnList(1), TnList(Uncons, IsEmpty, Swap, Pop), Ifte)
   lazy val leftBrace = TnList(NullList, TnList(innerPull, I, Pop, Dup, "]", Intern, ListEq, not, I),
-    TnList(TnList(Uncons, Dup, TnList(Cons), Dip, IsEmpty), smash,
+    TnList(TnList(Dup, short, I), smash,
       TnList(Swap, Cons, TnList(I), Uncons, Pop, Swap, Cons), Ifte), tnwhile, I, Pop, reverse, I)
   lazy val innerPull = TnList(ref("pull"), I, Swap, TnList(Dup, "[", Intern, ListEq),
     TnList(Swap, Pop, I, NullList, Cons, One), TnList(TnList(Dup, "\"", Intern, ListEq),
@@ -83,6 +84,7 @@ object Hardcodes {
     ("reverse", reverse),
     ("fold", fold),
     ("any", anyTrue),
+    ("short", short),
     ("\"", strQuote),
     ("parsenum", parseNum),
     ("numtable", numTable),

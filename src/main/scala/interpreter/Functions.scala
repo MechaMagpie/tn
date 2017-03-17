@@ -76,12 +76,17 @@ object Uncons extends
 object NullList extends TnFun("[]", _.push(TnList()))
 object One extends TnFun("1", _.push(1))
 object Ifte extends TnFun("ifte", RecurImpl.ifteImpl(_).result)
-object Def extends TnFun("def", stack => {val (body, name) = (stack.pop, stack.pop); State.table.defun(name, body)})
+object Def extends TnFun("def", stack => {val (name, body) = (stack.pop, stack.pop); State.table.defun(name, body)})
 object Undef extends TnFun("undef", stack => State.table.undefun(stack.pop))
 object Table extends TnFun("table", stack => State.table.replace(stack.pop.asInstanceOf[TnList]))
 object Sym extends TnFun("sym", _.push(State.table.fnLs))
 object Copy extends TnFun("copy", stack => stack.push(stack.pop.asInstanceOf[TnList].copy))
 object Intern extends TnFun("intern", stack => stack.push(State.table.map(stack.pop.asString)))
+object Name extends TnFun("name", stack => stack.pushAll(stack.pop match {
+  case fun: TnFun => List(fun.name, 1)
+  case ls: TnList if State.table.nameMap.contains(ls) => List(State.table.nameMap(ls), 1)
+  case _ => List(TnList(), 0)
+}))
 object Pull extends TnFun("pull", stack => {
   val res = Parser.parseNext; res match {
     case Some(fun) => stack.push(fun, 1)
@@ -99,19 +104,20 @@ object Add extends ArithFun("+", _ + _)
 object Sub extends ArithFun("-", _ - _)
 object Mul extends ArithFun("*", _ * _)
 object Div extends ArithFun("/", _ / _)
-object Mod extends ArithFun("%", _ / _)
+object Mod extends ArithFun("%", _ % _)
 object Lt extends ArithFun("<", (i1, i2) => if (i1 < i2) 1 else 0)
-object Gt extends ArithFun(">", (i1, i2) => if (i1 < i2) 1 else 0)
+object Gt extends ArithFun(">", (i1, i2) => if (i1 > i2) 1 else 0)
 object Eq extends ArithFun("=", (i1, i2) => if (i1 == i2) 1 else 0)
 object ListEq extends TnFun("'=", stack => {val (l1, l2) = (stack.pop, stack.pop);
   stack.push(if(l1.isInstanceOf[TnList] && l2.isInstanceOf[TnList] && l1 == l2) 1 else 0)})
 object IsInt extends TnFun("int?", stack => stack.push(if(stack.pop.isInstanceOf[TnInt]) 1 else 0))
-object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isInstanceOf[TnInt]) 1 else 0))
+object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isInstanceOf[TnList]) 1 else 0))
 object IsEmpty extends TnFun("null?", stack => stack.push(if(stack.pop.getList.isEmpty) 1 else 0))
 
 object Functions {
   val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList, One, Ifte, Def, Undef, Sym, Copy,
-    Intern, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList, IsEmpty)
+    Intern, Name, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList,
+    IsEmpty)
   val defaultModule = new TnList(TnInt('m') :: fromString("default") ::
     (for(fun <- allFunctions) yield TnList(fun.name, TnList(fun))).toList)
 }

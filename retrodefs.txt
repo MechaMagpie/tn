@@ -20,3 +20,9 @@
 
 
 [[] [pu[] pop dup "]" intern '= [not] i] [swap cons] [while] i pop [reverse] i]
+
+[dup 1 [[10 / dup 10 <] dip swap] [1 +] while] "digits" def
+
+[] "reprint" def
+
+[[dup int?] [reprint] [reprlist] ifte] "repr" def

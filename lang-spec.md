@@ -57,7 +57,7 @@ The following functions are predefined from the built-ins
 | xor	 | a b 			 | a ⊕ b	| Yields exclusive disjunction of top elements					|
 | fold	 | [list] [fun]	 | result	| Folds list with given function  	  							|
 | any	 | [[pred]..]	 | bool		| Tests if any predicate from list holds						|
-| number? | [ls]			 | [ls] bool | Tests if given list is function body of a number parser		|
+| number? | [ls]		 | [ls] bool | Tests if given list is function body of a number parser		|
 | numtable | ...		 | [tabl]	| Pushes table where only numbers are defined  	 				|
 | print  | [str]		 | ...		| Prints string to output										|
 | spill	 | [a b ...]	 | ... b a	| Empties list onto stack										|

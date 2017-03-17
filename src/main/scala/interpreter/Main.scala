@@ -6,11 +6,14 @@ object Main {
   object ParserChoked extends Exception
 
   def main(args: Array[String]): Unit = {
+    println("Ready!")
     try {
       while(true) {
         val fun = Parser.parseNext()
         fun match {
-          case Some(list) => list.getList.foreach(_(State.stack))
+          case Some(list) => {
+            list.getList.foreach(_(State.stack))
+          }
           case _ => throw ParserChoked
         }
       }
