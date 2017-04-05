@@ -1,3 +1,6 @@
+"-- Comments are not actually part of the language, but this will be " pop
+"-- ignored because it is followed by -->" pop
+
 [[pop] dip] "popd" def
 [1 [[10 / dup 0 >] dip swap] [1 +] while [pop] dip] "digits" def
 [[dup 0 >] [[dup [i] dip] dip 1 -] while pop pop] "repeat" def
@@ -5,3 +8,4 @@
 "temp" "rep" def
 ["[" swap [rep smash " " smash] fold "]" smash reverse] "listrep" def
 [[dup int?] [intrep] [[dup name] [popd] [pop listrep] ifte] ifte] "rep" def
+[[reverse] dip smash reverse] "append" def

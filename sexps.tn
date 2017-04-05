@@ -1,0 +1,38 @@
+"std.tn" input
+"]" intern ")" def
+[[dup list?] [i] [] ifte] "expand" def
+"-- Definingf '(' as the function, that:" pop
+"-- - saves the table" pop
+"-- - redefines '[' to reverse after it's done parsing" pop
+"-- (also swaps the list and 'i' if the function is a complex one)" pop
+"-- - redefines '(' to '['" pop
+"-- - parses the remainder" pop
+"-- - returns the old table" pop
+"-- - evals" pop
+
+[
+	sym copy
+	"[" intern reverse [
+		[dup uncons list? popd] [uncons uncons [swap] dip cons cons] [] ifte
+		reverse
+	] smash reverse "[" def
+	"(" undef "[" intern "(" def
+	"[" intern i
+	swap table
+	i
+] "(" def
+
+"-- redefining functions to auto-expand list arguments" pop
+[expand swap expand] "swapex" def
+[swapex +] "+" def
+[swapex -] "-" def
+[swapex *] "*" def
+[swapex /] "/" def
+[swapex %] "%" def
+[swapex >] ">" def
+[swapex <] "<" def
+[swapex =] "=" def
+"-- I can't get away with the above anymore because these are longer funs" pop
+"-- than one and will not be unquoted automatically" pop
+[expand] "rep" intern append "rep" def
+[expand] "print" intern append "print" def

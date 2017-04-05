@@ -24,7 +24,17 @@ object TestHelpers {
   case class DummyFile(str: String) extends InputQueue {
     for(chr <- str) queue += chr
     override def block(): Unit = ???
+    override def finished(): Boolean = throw new IllegalStateException()
   }
 
-  def giveLine(str: String) = State.files.push(DummyFile(str))
+  def giveLine(str: String) = State.files.push(DummyFile(str));
+
+  def testLine(str: String)(implicit stack: Stack[TnObj]) = {
+    giveLine(str)
+    try {
+      while(true) Parser.parseNext().get.eval(stack)
+    } catch {
+      case _: Throwable => {}
+    }
+  }
 }

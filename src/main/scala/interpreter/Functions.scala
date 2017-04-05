@@ -115,8 +115,9 @@ object IsList extends TnFun("list?", stack => stack.push(if(stack.pop.isInstance
 object IsEmpty extends TnFun("null?", stack => stack.push(if(stack.pop.getList.isEmpty) 1 else 0))
 
 object Functions {
-  val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList, One, Ifte, Def, Undef, Sym, Copy,
-    Intern, Name, Pull, Tn, Put, Input, Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList,
+  val allFunctions = List[TnFun](Dup, Dip, Pop, I, Swap, Cons, Uncons, NullList,
+    One, Ifte, Def, Undef, Table, Sym, Copy, Intern, Name, Pull, Tn, Put, Input,
+    Output, Exit, Add, Sub, Mul, Div, Mod, Lt, Gt, Eq, ListEq, IsInt, IsList,
     IsEmpty)
   val defaultModule = new TnList(TnInt('m') :: fromString("default") ::
     (for(fun <- allFunctions) yield TnList(fun.name, TnList(fun))).toList)

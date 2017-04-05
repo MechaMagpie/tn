@@ -25,5 +25,4 @@ object Main {
       case e: Exception => println("evaluation error: " + e.getMessage)
     }
   }
-
 }
