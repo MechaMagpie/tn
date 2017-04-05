@@ -41,6 +41,7 @@ The following functions should be built into the interpreter
 | '=	 | l1 l2	 	 | l1 == l2	| Tests for pointer to same list			      				|
 | int?	 | x  		 	 | bool	 	| Tests for int						      						|
 | list?	 | x		 	 | bool		| Tests for list pointer				      					|
+| null?	 | x			 | bool		| Tests for empty list											|
 
 ## Predefined functions
 
